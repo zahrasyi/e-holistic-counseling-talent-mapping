@@ -328,7 +328,6 @@
                     <div>
                         <p class="text-sm text-slate-700 leading-relaxed ml-2 font-medium text-justify">"Setiap orang dimudahkan menuju apa yang telah diciptakan untuknya."</p>
                         <span class="text-xs font-bold block mt-3 w-fit px-2 py-1 rounded" style="color: #059669; background-color: #ecfdf5;">HR. Bukhari dan Muslim</span>
-                        {{-- <p class="text-xs text-gray-500 mt-2 text-justify">Hadis ini menegaskan nilai profesionalisme spiritual — bahwa setiap bakat yang dikembangkan dengan niat ibadah akan menjadi jalan menuju keberkahan hidup.</p> --}}
                     </div>
                 </div>
                 <div class="snap-center shrink-0 w-[95%] sm:w-[85%] flex items-start bg-white p-5 rounded-xl shadow-sm border-l-4" style="border-color: #fbbf24;">
@@ -336,7 +335,6 @@
                     <div>
                         <p class="text-sm text-slate-700 leading-relaxed ml-2 font-medium text-justify">"Setiap manusia memiliki jalan dan kemampuan unik yang Allah titipkan kepadanya; tugasnya adalah mengenali dan memanfaatkannya untuk kebaikan."</p>
                         <span class="text-xs font-bold block mt-3  w-fit px-2 py-1 rounded" style="color: #d97706; background-color: #fffbeb;">Imam Ibn Qayyim al-Jauziyyah</span>
-                        {{-- <p class="text-xs text-gray-500 mt-2 text-justify">Ulama besar ini mengingatkan bahwa bakat akademik, sosial, maupun teknologis akan bernilai ibadah bila disertai iman dan tujuan suci.</p> --}}
                     </div>
                 </div>
     
