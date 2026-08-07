@@ -236,7 +236,17 @@
                         '{{ asset($ukm['gambar']) }}',
                         '{{ $ukm['persen'] }}'
                     )">
-                    <img src="{{ asset($ukm['gambar']) }}" onerror="this.src='https://placehold.co/400x200/e2e8f0/475569?text=UKM+Image'" class="w-full h-40 object-cover" alt="{{ $ukm['UKM'] }}">
+                    
+                    {{-- Wadah Gambar Card Anti-Crop (Rasio 16:9) --}}
+                    <div class="w-full aspect-video bg-slate-100 flex items-center justify-center border-b border-gray-100 overflow-hidden">
+                        <img 
+                            src="{{ asset($ukm['gambar']) }}" 
+                            onerror="this.src='https://placehold.co/400x200/e2e8f0/475569?text=UKM+Image'" 
+                            class="w-full h-full object-contain p-3" 
+                            alt="{{ $ukm['UKM'] }}"
+                        >
+                    </div>
+
                     <div class="p-5">
                         <h3 class="font-bold text-lg text-gray-800">{{ $ukm['UKM'] }}</h3>
                         <div class="mt-3">
@@ -267,7 +277,17 @@
                         '{{ asset($ukm['gambar']) }}', 
                         '{{ $ukm['persen'] }}'
                     )">
-                    <img src="{{ asset($ukm['gambar']) }}" onerror="this.src='https://placehold.co/400x200/e2e8f0/475569?text=UKM+Image'" class="w-full h-40 object-cover" alt="{{ $ukm['UKM'] }}">
+                    
+                    {{-- Wadah Gambar Card Anti-Crop (Rasio 16:9) --}}
+                    <div class="w-full aspect-video bg-slate-100 flex items-center justify-center border-b border-gray-100 overflow-hidden">
+                        <img 
+                            src="{{ asset($ukm['gambar']) }}" 
+                            onerror="this.src='https://placehold.co/400x200/e2e8f0/475569?text=UKM+Image'" 
+                            class="w-full h-full object-contain p-3" 
+                            alt="{{ $ukm['UKM'] }}"
+                        >
+                    </div>
+
                     <div class="p-5">
                         <h3 class="font-bold text-lg text-gray-800">{{ $ukm['UKM'] }}</h3>
                         <div class="mt-3">
