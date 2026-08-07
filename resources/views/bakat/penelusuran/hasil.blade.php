@@ -388,14 +388,14 @@
                 <div class="p-6 md:p-8 overflow-y-auto skor-scrollbar">
                     
                     <div class="flex items-center justify-between mb-5 border-b border-gray-100 pb-4">
-                        <span class="text-sm font-semibold text-slate-500">Tingkat Kecocokan Anda:</span>
+                        <span class="text-sm font-semibold text-slate-500">Tingkat Kecocokan:</span>
                         <span id="modal-ukm-percent" class="px-4 py-1.5 bg-[#eef3fc] text-[#34538c] font-bold rounded-full text-sm border border-blue-100">
                             0%
                         </span>
                     </div>
                     
                     <h4 class="text-base font-bold text-[#34538c] mb-3 flex items-center">
-                        <i class="fas fa-info-circle mr-2"></i> Tentang UKM Ini
+                        <i class="fas fa-info-circle mr-2"></i> Tentang UKM
                     </h4>
                     
                     <p id="modal-ukm-desc" class="text-sm md:text-base text-slate-600 leading-relaxed text-justify whitespace-pre-line">
