@@ -228,19 +228,27 @@
         {{-- ================= PUTRI ================= --}}
         <div id="ukm-putri" class="grid md:grid-cols-3 gap-6 transition-opacity duration-300">
             @forelse($rekomendasiPutri as $ukm)
-                {{-- onclick --}}
+                @php
+                    // Ambil data gambar, jika NULL jadikan string kosong
+                    $gambar_db = $ukm['gambar'] ?? '';
+                    // Pecah berdasarkan koma
+                    $kumpulan_foto = explode(',', $gambar_db);
+                    // Ambil foto pertama saja untuk cover
+                    $foto_cover = trim($kumpulan_foto[0]);
+                @endphp
+
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 cursor-pointer hover:shadow-lg transform transition hover:-translate-y-1"
                     onclick="bukaModalUKM(
                         '{{ addslashes($ukm['UKM']) }}',
-                        '{{ addslashes($ukm['deskripsi'] ?? 'Deskripsi tentang UKM ' . $ukm['UKM'] . ' belum tersedia saat ini.') }}',
-                        '{{ asset($ukm['gambar']) }}',
+                        '{{ addslashes($ukm['deskripsi'] ?? 'Deskripsi belum tersedia saat ini.') }}',
+                        '{{ addslashes($gambar_db) }}',
                         '{{ $ukm['persen'] }}'
                     )">
                     
-                    {{-- Wadah Gambar Card Anti-Crop (Rasio 16:9) --}}
+                    {{-- Wadah Gambar Card --}}
                     <div class="w-full aspect-video bg-slate-100 flex items-center justify-center border-b border-gray-100 overflow-hidden">
                         <img 
-                            src="{{ asset($ukm['gambar']) }}" 
+                            src="{{ $foto_cover ? asset($foto_cover) : '' }}" 
                             onerror="this.src='https://placehold.co/400x200/e2e8f0/475569?text=UKM+Image'" 
                             class="w-full h-full object-contain p-3" 
                             alt="{{ $ukm['UKM'] }}"
@@ -270,18 +278,27 @@
         {{-- ================= PUTRA ================= --}}
         <div id="ukm-putra" class="grid md:grid-cols-3 gap-6 transition-opacity duration-300">
             @forelse($rekomendasiPutra as $ukm)
+                @php
+                    // Ambil data gambar, jika NULL jadikan string kosong
+                    $gambar_db = $ukm['gambar'] ?? '';
+                    // Pecah berdasarkan koma
+                    $kumpulan_foto = explode(',', $gambar_db);
+                    // Ambil foto pertama saja untuk cover kartu
+                    $foto_cover = trim($kumpulan_foto[0]);
+                @endphp
+
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 cursor-pointer hover:shadow-lg transform transition hover:-translate-y-1"
                     onclick="bukaModalUKM(
                         '{{ addslashes($ukm['UKM']) }}', 
                         '{{ addslashes($ukm['deskripsi'] ?? 'Deskripsi detail tentang UKM ' . $ukm['UKM'] . ' belum tersedia saat ini.') }}', 
-                        '{{ asset($ukm['gambar']) }}', 
+                        '{{ addslashes($gambar_db) }}', 
                         '{{ $ukm['persen'] }}'
                     )">
                     
                     {{-- Wadah Gambar Card Anti-Crop (Rasio 16:9) --}}
                     <div class="w-full aspect-video bg-slate-100 flex items-center justify-center border-b border-gray-100 overflow-hidden">
                         <img 
-                            src="{{ asset($ukm['gambar']) }}" 
+                            src="{{ $foto_cover ? asset($foto_cover) : '' }}" 
                             onerror="this.src='https://placehold.co/400x200/e2e8f0/475569?text=UKM+Image'" 
                             class="w-full h-full object-contain p-3" 
                             alt="{{ $ukm['UKM'] }}"
@@ -392,17 +409,13 @@
                     <i class="fas fa-times"></i>
                 </button>
 
-                {{-- Container Gambar Modal (Rasio 16:9, Anti-Crop) --}}
-                <div class="w-full aspect-video relative bg-slate-100 border-b border-gray-200">
+                {{-- ⚠️ PASTIKAN BAGIAN INI SUDAH DIUBAH MENJADI SLIDER CONTAINER --}}
+                <div id="modal-slider-container" class="w-full aspect-video flex overflow-x-auto snap-x snap-mandatory hide-scrollbar bg-slate-100 border-b border-gray-200 relative">
                     
-                    {{-- Gambar UKM --}}
-                    <img id="modal-ukm-img" src="" onerror="this.src='https://placehold.co/800x450/e2e8f0/475569?text=UKM+Image'" alt="Foto UKM" class="w-full h-full object-contain p-4">
-                    
-                    {{-- Overlay Judul UKM (Gradient Hitam) --}}
-                    <div class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-slate-900/90 to-transparent p-6 pointer-events-none">
+                    {{-- Overlay Judul UKM (Harus ada di dalam container ini) --}}
+                    <div class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-slate-900/90 to-transparent p-6 pointer-events-none z-10">
                         <h2 id="modal-ukm-title" class="text-2xl md:text-3xl font-bold text-white">Nama UKM</h2>
                     </div>
-                    
                 </div>
 
                 <div class="p-6 md:p-8 overflow-y-auto skor-scrollbar">
@@ -470,28 +483,86 @@
             }
         }
 
-        // Fungsi untuk MEMBUKA Modal
-        function bukaModalUKM(nama, deskripsi, fotoUrl, persen) {
-            // Ambil elemen modal
-            const modal = document.getElementById('ukm-modal');
-            const modalContent = document.getElementById('ukm-modal-content');
-            
-            // Isi data ke dalam modal
+        // Variabel global untuk menyimpan "mesin" penggerak slider
+        let autoSlideInterval;
+
+        // Fungsi untuk MEMBUKA Modal (Versi Slider Otomatis)
+        function bukaModalUKM(nama, deskripsi, kumpulanGambar, persen) {
+            // 1. Isi teks dasar ke dalam modal
             document.getElementById('modal-ukm-title').innerText = nama;
             document.getElementById('modal-ukm-desc').innerText = deskripsi;
             document.getElementById('modal-ukm-percent').innerText = persen + '%';
-            document.getElementById('modal-ukm-img').src = fotoUrl;
 
-            // Tampilkan modal dengan animasi
-            modal.style.display = "flex";
-            modal.classList.remove('hidden');
+            // 2. Ambil elemen container slider gambar
+            const sliderContainer = document.getElementById('modal-slider-container');
+            const fotoArray = kumpulanGambar.split(','); // Pecah teks gambar
             
-            // Sedikit delay agar transisi CSS terbaca
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
+            if (sliderContainer) {
+                // Bersihkan foto-foto dari UKM yang dibuka sebelumnya
+                const existingSlides = sliderContainer.querySelectorAll('.slide-item');
+                existingSlides.forEach(slide => slide.remove());
+
+                const baseUrl = "{{ asset('') }}"; 
+
+                // Looping untuk membuat elemen gambar baru
+                fotoArray.forEach(foto => {
+                    const pathFoto = foto.trim(); 
+                    if(pathFoto !== '') {
+                        const slideDiv = document.createElement('div');
+                        slideDiv.className = "slide-item min-w-full h-full snap-center flex items-center justify-center p-4";
+                        
+                        slideDiv.innerHTML = `
+                            <img src="${baseUrl}${pathFoto}" 
+                                 onerror="this.src='https://placehold.co/800x450/e2e8f0/475569?text=UKM+Image'" 
+                                 class="w-full h-full object-contain" 
+                                 alt="Foto Slide UKM">
+                        `;
+                        
+                        sliderContainer.insertBefore(slideDiv, sliderContainer.lastElementChild);
+                    }
+                });
+
+                // Reset posisi scroll kembali ke gambar pertama
+                sliderContainer.scrollLeft = 0;
+            }
+
+            // 3. Tampilkan modal dengan animasi
+            const modal = document.getElementById('ukm-modal');
+            const modalContent = document.getElementById('ukm-modal-content');
+            
+            if (modal && modalContent) {
+                modal.style.display = "flex";
+                modal.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 10);
+            }
+
+            // 4. LOGIKA AUTO-SLIDE (Jalan sendiri)
+            clearInterval(autoSlideInterval); // Matikan interval lama jika ada
+            
+            // Jalankan hanya jika jumlah fotonya lebih dari 1
+            if (fotoArray.length > 1) {
+                // Geser otomatis setiap 3000 milidetik (3 detik)
+                autoSlideInterval = setInterval(() => {
+                    if (sliderContainer) {
+                        // Hitung batas maksimal geseran
+                        const maxScroll = sliderContainer.scrollWidth - sliderContainer.clientWidth;
+                        
+                        // Jika posisi scroll sudah mentok di ujung kanan, kembalikan ke awal (kiri)
+                        // Dikurangi 10 untuk toleransi pembulatan piksel browser
+                        if (sliderContainer.scrollLeft >= maxScroll - 10) {
+                            sliderContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                        } else {
+                            // Geser ke kanan sebesar lebar 1 elemen gambar
+                            sliderContainer.scrollBy({ left: sliderContainer.clientWidth, behavior: 'smooth' });
+                        }
+                    }
+                }, 3000); 
+            }
         }
 
         // Fungsi untuk MENUTUP Modal
@@ -499,19 +570,22 @@
             const modal = document.getElementById('ukm-modal');
             const modalContent = document.getElementById('ukm-modal-content');
             
+            // ⚠️ PENTING: Matikan mesin auto-slide agar tidak memakan memori di latar belakang
+            clearInterval(autoSlideInterval);
+            
             // Jalankan animasi keluar
             modal.classList.add('opacity-0');
             modalContent.classList.remove('scale-100');
             modalContent.classList.add('scale-95');
             
-            // Sembunyikan sepenuhnya setelah animasi selesai (300ms)
+            // Sembunyikan sepenuhnya setelah animasi selesai
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.style.display = "none";
             }, 300);
         }
+        
 
-        // Fungsi untuk menggeser slider motivasi dengan panah
         // Fungsi untuk menggeser slider motivasi
         function slideSearchQuote(direction) {
             const slider = document.getElementById('search-quote-slider');
